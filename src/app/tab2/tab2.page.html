@@ -1,0 +1,25 @@
+<ion-header [translucent]="true">
+  <ion-toolbar><ion-title>Mi carrito</ion-title></ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="cart-content">
+  <div class="page-heading"><p class="eyebrow">Compra segura y sencilla</p><h1>Revisa tu selección</h1><p>El carrito se conserva en el dispositivo mediante almacenamiento local.</p></div>
+  @if (confirmationMessage) { <div class="confirmation"><ion-icon name="checkmark-circle-outline"></ion-icon><ion-text>{{ confirmationMessage }}</ion-text></div> }
+  @if (cartService.items$ | async; as items) {
+    @if (items.length === 0) { <div class="empty-state"><ion-icon name="cart-outline"></ion-icon><h2>El carrito está vacío</h2><p>Agregue productos desde la tienda para iniciar una compra.</p></div> }
+    @else {
+      <div class="cart-layout">
+        <ion-list class="items-list">
+          @for (item of items; track item.product.id) {
+            <ion-item lines="none" class="cart-item">
+              <ion-img slot="start" [src]="item.product.thumbnail" [alt]="item.product.title"></ion-img>
+              <ion-label><h2>{{ item.product.title }}</h2><p>{{ item.product.price | currency:'USD':'symbol':'1.2-2' }} por unidad</p><div class="quantity-controls"><ion-button fill="clear" size="small" (click)="cartService.decrease(item.product.id)" aria-label="Disminuir cantidad"><ion-icon name="remove"></ion-icon></ion-button><strong>{{ item.quantity }}</strong><ion-button fill="clear" size="small" (click)="cartService.increase(item.product.id)" aria-label="Aumentar cantidad"><ion-icon name="add"></ion-icon></ion-button></div></ion-label>
+              <div class="item-total">{{ item.product.price * item.quantity | currency:'USD':'symbol':'1.2-2' }}</div><ion-button slot="end" fill="clear" color="medium" (click)="cartService.remove(item.product.id)" aria-label="Eliminar producto"><ion-icon name="trash-outline"></ion-icon></ion-button>
+            </ion-item>
+          }
+        </ion-list>
+        <ion-card class="summary-card"><ion-card-header><ion-card-title>Resumen del pedido</ion-card-title></ion-card-header><ion-card-content><div class="summary-line"><span>Productos</span><span>{{ cartService.count$ | async }}</span></div><div class="summary-line"><span>Envío</span><span>Gratis</span></div><div class="summary-total"><span>Total</span><strong>{{ cartService.total$ | async | currency:'USD':'symbol':'1.2-2' }}</strong></div><ion-button expand="block" (click)="finishPurchase()">Confirmar pedido</ion-button><ion-note>La confirmación es demostrativa; no se procesa un pago real.</ion-note></ion-card-content></ion-card>
+      </div>
+    }
+  }
+</ion-content>

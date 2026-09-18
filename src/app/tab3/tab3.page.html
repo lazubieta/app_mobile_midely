@@ -1,0 +1,12 @@
+<ion-header [translucent]="true">
+  <ion-toolbar><ion-title>Mi cuenta</ion-title></ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="account-content">
+  <div class="account-heading"><p class="eyebrow">Cuenta Midely</p><h1>Compra con confianza</h1><p>La sesión de demostración se guarda de forma local para validar el flujo de autenticación.</p></div>
+  @if (authService.session$ | async; as session) {
+    <ion-card class="account-card logged-card"><ion-card-content><div class="avatar">{{ session.name.charAt(0).toUpperCase() }}</div><h2>Hola, {{ session.name }}</h2><p>{{ session.email }}</p><div class="security-line"><ion-icon name="shield-checkmark-outline"></ion-icon><span>Sesión persistida con Capacitor Preferences.</span></div><ion-button expand="block" fill="outline" color="medium" (click)="logout()"><ion-icon slot="start" name="log-out-outline"></ion-icon>Cerrar sesión</ion-button></ion-card-content></ion-card>
+  } @else {
+    <ion-card class="account-card"><ion-card-header><ion-card-title>Iniciar sesión</ion-card-title></ion-card-header><ion-card-content><form (ngSubmit)="login()"><ion-item lines="full"><ion-label position="stacked">Correo electrónico</ion-label><ion-input [(ngModel)]="email" name="email" type="email" autocomplete="email" required></ion-input></ion-item><ion-item lines="full"><ion-label position="stacked">Contraseña</ion-label><ion-input [(ngModel)]="password" name="password" type="password" autocomplete="current-password" required></ion-input></ion-item><ion-button expand="block" type="submit" [disabled]="submitting"><ion-icon slot="start" name="log-in-outline"></ion-icon>{{ submitting ? 'Validando…' : 'Ingresar' }}</ion-button></form><ion-note>Credenciales de demostración: demo@midely.com / midely123</ion-note>@if (message) { <ion-text [color]="error ? 'danger' : 'success'"><p class="form-message">{{ message }}</p></ion-text> }</ion-card-content></ion-card>
+  }
+</ion-content>

@@ -1,0 +1,7 @@
+{
+  "name": "AppGalery",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

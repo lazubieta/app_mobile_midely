@@ -1,0 +1,40 @@
+<ion-header [translucent]="true">
+  <ion-toolbar><ion-title>Midely</ion-title></ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="store-content">
+  <section class="hero" aria-label="Presentación de Midely">
+    <div><p class="eyebrow">Compra simple, compra mejor</p><h1>Todo lo que necesitas, en un solo lugar.</h1><p>Explora productos seleccionados y guarda tus favoritos en el carrito.</p></div>
+    <ion-icon name="cart-outline" aria-hidden="true"></ion-icon>
+  </section>
+
+  <div class="filters">
+    <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="filterProducts()" placeholder="Buscar productos" aria-label="Buscar productos"></ion-searchbar>
+    <div class="category-filter">
+      <label id="select-label" for="select-control">Categoría</label>
+      <ion-select id="select-control" [(ngModel)]="selectedCategory" (ionChange)="filterProducts()" interface="popover" [interfaceOptions]="categorySelectOptions" aria-labelledby="select-label">
+        <ion-select-option value="todos">Todas las categorías</ion-select-option>
+        @for (category of categories; track category) { <ion-select-option [value]="category">{{ category | titlecase }}</ion-select-option> }
+      </ion-select>
+    </div>
+  </div>
+
+  @if (loading) { <div class="state"><ion-spinner name="crescent"></ion-spinner><p>Cargando catálogo…</p></div> }
+  @if (!loading && errorMessage) {
+    <div class="state error-state"><p>{{ errorMessage }}</p><ion-button fill="outline" (click)="loadProducts()"><ion-icon slot="start" name="refresh-outline"></ion-icon>Reintentar</ion-button></div>
+  }
+  @if (!loading && !errorMessage) {
+    <ion-grid><ion-row>
+      @for (product of filteredProducts; track product.id) {
+        <ion-col size="12" size-md="6" size-lg="4">
+          <ion-card class="product-card">
+            <div class="product-image-wrap"><ion-img [src]="product.thumbnail" [alt]="product.title"></ion-img><ion-badge>{{ product.category | titlecase }}</ion-badge></div>
+            <ion-card-header><ion-card-title>{{ product.title }}</ion-card-title><div class="rating"><ion-icon name="star" aria-hidden="true"></ion-icon>{{ product.rating || 4.5 }}</div></ion-card-header>
+            <ion-card-content><p class="description">{{ product.description }}</p><div class="product-footer"><strong>{{ product.price | currency:'USD':'symbol':'1.2-2' }}</strong><ion-button size="small" (click)="addToCart(product)"><ion-icon slot="start" name="cart-outline"></ion-icon>Agregar</ion-button></div></ion-card-content>
+          </ion-card>
+        </ion-col>
+      }
+    </ion-row></ion-grid>
+    @if (filteredProducts.length === 0) { <div class="state"><p>No se encontraron productos con esos filtros.</p></div> }
+  }
+</ion-content>
